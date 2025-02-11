@@ -63,8 +63,8 @@ jobs:
         with:
           server_address: smtp.gmail.com
           server_port: 465
-          username: ${{ secrets.email }}
-          password: ${{ secrets.password }}
+          username: ${{ secrets.EMAIL }}
+          password: ${{ secrets.PASSWORD }}
           subject: "Bug Report & APK - ${{ env.APP_NAME }}"
           to: ${{ env.EMAIL_TO }}
           from: "CI/CD System"
