@@ -1,0 +1,73 @@
+name: Android CI
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    name: Build & Test Android App
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 11
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: 11
+
+      - name: Set up Gradle cache
+        uses: gradle/gradle-build-action@v2
+
+      - name: Grant execute permission to Gradle
+        run: chmod +x gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug
+
+      - name: Run Unit Tests
+        run: ./gradlew testDebugUnitTest | tee unit_test_results.txt
+
+      - name: Run UI Tests
+        run: ./gradlew connectedDebugAndroidTest | tee ui_test_results.txt
+
+      - name: Run Lint check
+        run: ./gradlew lint | tee lint_results.txt
+
+      - name: Archive Debug APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
+
+      - name: Send Email with Test Report & APK
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          username: ${{ secrets.EMAIL_USERNAME }}
+          password: ${{ secrets.EMAIL_PASSWORD }}
+          subject: "Bug Report & APK - Reminder App"
+          to: your_email@example.com
+          from: "CI/CD System"
+          body: |
+            Hello,
+
+            Here is the latest bug report for the Reminder App.
+
+            - ✅ Unit Tests: See `unit_test_results.txt`
+            - ✅ UI Tests: See `ui_test_results.txt`
+            - ✅ Lint Report: See `lint_results.txt`
+            
+            You can find the Debug APK attached.
+
+            Regards,
+            CI/CD System
+          attachments: app/build/outputs/apk/debug/app-debug.apk, unit_test_results.txt, ui_test_results.txt, lint_results.txt
