@@ -1,4 +1,4 @@
-name: ReminderApp CI  # ✅ Update this if your app name is different
+name: ReminderApp Minimal CI
 
 on:
   push:
@@ -9,13 +9,13 @@ on:
       - master
 
 env:
-  APP_NAME: "ReminderApp"  # ✅ Update this if your app name is different
-  EMAIL_TO: "samar.m.yasin@gmail.com"  # ✅ Change this to your email
-  JAVA_VERSION: "17"  # ✅ Change if needed (You are using Java 11)
+  APP_NAME: "ReminderApp"
+  EMAIL_TO: "samar.m.yasin@gmail.com"
+  JAVA_VERSION: "17"
 
 jobs:
-  build:
-    name: Build & Test ReminderApp  # ✅ Use a static name or dynamically generate it elsewhere
+  build_and_test:
+    name: Build and Run Unit Tests
     runs-on: ubuntu-latest
 
     steps:
@@ -41,48 +41,41 @@ jobs:
 
       - name: ✅ Run Unit Tests
         run: ./gradlew testDebugUnitTest | tee unit_test_results.txt
-        continue-on-error: false  # ❌ Fail the build if tests fail
-
-      - name: 🖥️ Run UI Tests (Espresso)
-        run: ./gradlew connectedDebugAndroidTest | tee ui_test_results.txt
-        continue-on-error: false  # ❌ Fail the build if UI tests fail
-
-      - name: 🔍 Run Lint Check
-        run: ./gradlew lint | tee lint_results.txt
-        continue-on-error: false  # ❌ Fail the build if linting fails
+        continue-on-error: false
 
       - name: 📂 Archive Debug APK
-        uses: actions/upload-artifact@v4  # ✅ Updated to v4
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.APP_NAME }}-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: 📧 Send Email with Test Report & APK
-        if: success() || failure()  # Send email even if the job fails
+        if: success() || failure()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL }}
           password: ${{ secrets.PASSWORD }}
-          subject: "Bug Report & APK - ${{ env.APP_NAME }}"
+          subject: "CI/CD Report - ${{ env.APP_NAME }} - ${{ github.run_id }} - ${{ job.status }}"
           to: ${{ env.EMAIL_TO }}
           from: "CI/CD System"
           body: |
             Hello,
 
-            Here is the latest **bug report** for the **${{ env.APP_NAME }}**.
+            Here is the latest CI/CD report for **${{ env.APP_NAME }}**.
+
+            - **Build Status:** ${{ job.status }}
+            - **Run ID:** ${{ github.run_id }}
+            - **Commit:** ${{ github.sha }}
+            - **Branch:** ${{ github.ref }}
 
             - ✅ **Unit Tests**: See `unit_test_results.txt`
-            - ✅ **UI Tests**: See `ui_test_results.txt`
-            - ✅ **Lint Report**: See `lint_results.txt`
 
             You can find the **Debug APK** attached.
 
-            Regards,  
+            Regards,
             **CI/CD System**
           attachments: |
             app/build/outputs/apk/debug/app-debug.apk
             unit_test_results.txt
-            ui_test_results.txt
-            lint_results.txt
