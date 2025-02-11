@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.workload.components"
+    namespace = "com.workload.screens"
     compileSdk = 35
 
     defaultConfig {
@@ -61,5 +61,5 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
     implementation(project(":presentation:style"))
-
+    implementation(project(":presentation:components"))
 }
