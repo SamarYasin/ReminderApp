@@ -30,6 +30,8 @@ jobs:
 
       - name: ⚡ Set Up Gradle Cache
         uses: gradle/gradle-build-action@v2
+        with:
+          cache-read-only: false
 
       - name: 🔑 Grant Execute Permission to Gradle
         run: chmod +x gradlew
@@ -56,6 +58,7 @@ jobs:
           path: app/build/outputs/apk/debug/app-debug.apk
 
       - name: 📧 Send Email with Test Report & APK
+        if: success() || failure()  # Send email even if the job fails
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
@@ -73,9 +76,13 @@ jobs:
             - ✅ **Unit Tests**: See `unit_test_results.txt`
             - ✅ **UI Tests**: See `ui_test_results.txt`
             - ✅ **Lint Report**: See `lint_results.txt`
-            
+
             You can find the **Debug APK** attached.
 
             Regards,  
             **CI/CD System**
-          attachments: app/build/outputs/apk/debug/app-debug.apk, unit_test_results.txt, ui_test_results.txt, lint_results.txt
+          attachments: |
+            app/build/outputs/apk/debug/app-debug.apk
+            unit_test_results.txt
+            ui_test_results.txt
+            lint_results.txt
