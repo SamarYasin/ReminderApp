@@ -1,4 +1,4 @@
-name: Android CI
+name: ReminderApp CI  # ✅ Update this if your app name is different
 
 on:
   push:
@@ -8,66 +8,74 @@ on:
     branches:
       - master
 
+env:
+  APP_NAME: "ReminderApp"  # ✅ Update this if your app name is different
+  EMAIL_TO: "samar.m.yasin@gmail.com"  # ✅ Change this to your email
+  JAVA_VERSION: "11"  # ✅ Change if needed (You are using Java 11)
+
 jobs:
   build:
-    name: Build & Test Android App
+    name: Build & Test ${{ env.APP_NAME }}
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: 🚀 Checkout Code
         uses: actions/checkout@v3
 
-      - name: Set up JDK 11
+      - name: 🔧 Set Up JDK ${{ env.JAVA_VERSION }}
         uses: actions/setup-java@v3
         with:
           distribution: 'temurin'
-          java-version: 11
+          java-version: ${{ env.JAVA_VERSION }}
 
-      - name: Set up Gradle cache
+      - name: ⚡ Set Up Gradle Cache
         uses: gradle/gradle-build-action@v2
 
-      - name: Grant execute permission to Gradle
+      - name: 🔑 Grant Execute Permission to Gradle
         run: chmod +x gradlew
 
-      - name: Build Debug APK
+      - name: 🏗️ Build Debug APK
         run: ./gradlew assembleDebug
 
-      - name: Run Unit Tests
+      - name: ✅ Run Unit Tests
         run: ./gradlew testDebugUnitTest | tee unit_test_results.txt
+        continue-on-error: false  # ❌ Fail the build if tests fail
 
-      - name: Run UI Tests
+      - name: 🖥️ Run UI Tests (Espresso)
         run: ./gradlew connectedDebugAndroidTest | tee ui_test_results.txt
+        continue-on-error: false  # ❌ Fail the build if UI tests fail
 
-      - name: Run Lint check
+      - name: 🔍 Run Lint Check
         run: ./gradlew lint | tee lint_results.txt
+        continue-on-error: false  # ❌ Fail the build if linting fails
 
-      - name: Archive Debug APK
+      - name: 📂 Archive Debug APK
         uses: actions/upload-artifact@v3
         with:
-          name: debug-apk
+          name: ${{ env.APP_NAME }}-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      - name: Send Email with Test Report & APK
+      - name: 📧 Send Email with Test Report & APK
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 465
           username: ${{ secrets.EMAIL_USERNAME }}
           password: ${{ secrets.EMAIL_PASSWORD }}
-          subject: "Bug Report & APK - Reminder App"
-          to: your_email@example.com
+          subject: "Bug Report & APK - ${{ env.APP_NAME }}"
+          to: ${{ env.EMAIL_TO }}
           from: "CI/CD System"
           body: |
             Hello,
 
-            Here is the latest bug report for the Reminder App.
+            Here is the latest **bug report** for the **${{ env.APP_NAME }}**.
 
-            - ✅ Unit Tests: See `unit_test_results.txt`
-            - ✅ UI Tests: See `ui_test_results.txt`
-            - ✅ Lint Report: See `lint_results.txt`
+            - ✅ **Unit Tests**: See `unit_test_results.txt`
+            - ✅ **UI Tests**: See `ui_test_results.txt`
+            - ✅ **Lint Report**: See `lint_results.txt`
             
-            You can find the Debug APK attached.
+            You can find the **Debug APK** attached.
 
-            Regards,
-            CI/CD System
+            Regards,  
+            **CI/CD System**
           attachments: app/build/outputs/apk/debug/app-debug.apk, unit_test_results.txt, ui_test_results.txt, lint_results.txt
