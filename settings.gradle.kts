@@ -21,4 +21,7 @@ dependencyResolutionManagement {
 
 rootProject.name = "ReminderApp"
 include(":app")
- 
+include(":data")
+include(":domain")
+include(":presentation:style")
+include(":presentation:components")
