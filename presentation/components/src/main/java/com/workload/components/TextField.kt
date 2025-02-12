@@ -14,7 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 fun TextInputField(
     modifier: Modifier,
     value: String,
-    onValueChange: () -> Unit
+    onValueChange: (String) -> Unit
 ) {
 
     OutlinedTextField(
@@ -23,7 +23,7 @@ fun TextInputField(
             .wrapContentHeight(),
         value = value,
         onValueChange = {
-            onValueChange.invoke()
+            onValueChange.invoke(it)
         },
         enabled = true,
         singleLine = true,

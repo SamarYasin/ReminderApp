@@ -60,6 +60,9 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     androidTestImplementation(platform(libs.androidx.compose.bom))
 
+    //Timber Logging
+    implementation(libs.timber)
+
     implementation(project(":presentation:style"))
     implementation(project(":presentation:components"))
 }

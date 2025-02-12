@@ -2,9 +2,7 @@ package com.workload.components
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -39,10 +37,8 @@ fun ListItemCard(modifier: Modifier, content: @Composable () -> Unit) {
 
     Card(
         modifier = modifier
-            .padding(16.dp)
-            .fillMaxWidth()
-            .wrapContentHeight(),
-        shape = RoundedCornerShape(16.dp),
+            .fillMaxSize(),
+                shape = RoundedCornerShape (16.dp),
         elevation = CardDefaults.cardElevation(
             defaultElevation = 8.dp
         ),

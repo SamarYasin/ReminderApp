@@ -51,6 +51,9 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
 
+    //Timber Logging
+    implementation(libs.timber)
+
     // Testing Libraries
     testImplementation(libs.junit)
     debugImplementation(libs.androidx.ui.tooling)
