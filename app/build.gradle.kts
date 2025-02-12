@@ -85,7 +85,11 @@ dependencies {
     //Timber Logging
     implementation(libs.timber)
 
+    // Navigation
+    implementation(libs.androidx.navigation.compose)
+
     // Importing Modules
     implementation(project(":presentation:style"))
+    implementation(project(":presentation:screens"))
 
 }
